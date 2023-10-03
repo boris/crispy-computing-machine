@@ -9,7 +9,13 @@
  */
 
 export default {
-	async fetch(request, env, ctx) {
-		return new Response('Hello World!');
-	},
+    async fetch(request, env, ctx) {
+        const url = "https://api.unminable.com/v4/address/_SOME_BTC_ADDR_?coin=BTC"
+        const response = await fetch(url, {
+            method: request.method,
+            headers: request.headers,
+            body: request.body
+        })
+        return response
+    },
 };
