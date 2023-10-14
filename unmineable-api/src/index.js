@@ -11,11 +11,24 @@
 export default {
     async fetch(request, env, ctx) {
         const url = "https://api.unminable.com/v4/address/_SOME_BTC_ADDR_?coin=BTC"
-        const response = await fetch(url, {
-            method: request.method,
-            headers: request.headers,
-            body: request.body
-        })
-        return response
+
+        async function gatherResponse(response) {
+            const { headers } = response;
+            const contentType = headers.get("content-type") || "";
+            if (contentType.includes("application/json")) {
+                return JSON.stringify(await response.json());
+            }
+            return response.text();
+        }
+
+        const init = {
+            headers: {
+                "content-type": "application/json;charset=UTF-8",
+            },
+        };
+
+        const response = await fetch(url, init);
+        const results = await gatherResponse(response);
+        return new Response(results, init);
     },
 };
